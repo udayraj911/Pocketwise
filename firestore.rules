@@ -1,0 +1,62 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // User profile document
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) && isValidId(userId);
+
+      // Budget plans
+      match /budgetPlan/{planId} {
+        allow read, write: if isOwner(userId) && isValidId(userId) && isValidId(planId);
+      }
+
+      // Commitments subcollection
+      match /commitments/{commitmentId} {
+        allow read, write: if isOwner(userId) && isValidId(userId) && isValidId(commitmentId);
+      }
+
+      // Expenses subcollection
+      match /expenses/{expenseId} {
+        allow read, write: if isOwner(userId) && isValidId(userId) && isValidId(expenseId);
+      }
+
+      // Transactions subcollection
+      match /transactions/{transactionId} {
+        allow read, write: if isOwner(userId) && isValidId(userId) && isValidId(transactionId);
+      }
+
+      // Roadmap subcollection (Phase 3)
+      match /roadmap/{stepId} {
+        allow read, write: if isOwner(userId) && isValidId(userId) && isValidId(stepId);
+      }
+
+      // AI Insights subcollection (Phase 3)
+      match /insights/{insightId} {
+        allow read, write: if isOwner(userId) && isValidId(userId) && isValidId(insightId);
+      }
+
+      // Gamification profile subcollection
+      match /gamification/{docId} {
+        allow read, write: if isOwner(userId) && isValidId(userId) && isValidId(docId);
+      }
+    }
+  }
+}

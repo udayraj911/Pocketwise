@@ -1,0 +1,230 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "User email address"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name of the user"
+        },
+        "currency": {
+          "type": "string",
+          "description": "Selected currency symbol/code (e.g. INR)"
+        },
+        "timezone": {
+          "type": "string",
+          "description": "Configured timezone (e.g. Asia/Kolkata)"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Account creation timestamp"
+        }
+      },
+      "required": ["email", "createdAt"]
+    },
+    "BudgetPlan": {
+      "title": "BudgetPlan",
+      "description": "User active financial plan and budget cycle configuration",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner user ID"
+        },
+        "monthlyIncome": {
+          "type": "number",
+          "description": "Expected income for the period"
+        },
+        "currentCash": {
+          "type": "number",
+          "description": "Starting actual available cash"
+        },
+        "currency": {
+          "type": "string",
+          "description": "Currency code (default INR)"
+        },
+        "planStartDate": {
+          "type": "string",
+          "description": "Plan cycle start date in YYYY-MM-DD format"
+        },
+        "planEndDate": {
+          "type": "string",
+          "description": "Plan cycle end date in YYYY-MM-DD format"
+        },
+        "emergencyBuffer": {
+          "type": "number",
+          "description": "Protected emergency cushion"
+        },
+        "savingsGoalTarget": {
+          "type": "number",
+          "description": "Target savings amount"
+        },
+        "savingsGoalCurrent": {
+          "type": "number",
+          "description": "Currently saved amount"
+        },
+        "isOnboardingComplete": {
+          "type": "boolean",
+          "description": "Whether user finished AI financial interview"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last update timestamp"
+        }
+      },
+      "required": ["userId", "monthlyIncome", "planStartDate", "planEndDate"]
+    },
+    "Commitment": {
+      "title": "Commitment",
+      "description": "Essential bills, fixed commitments and recurring subscriptions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "category": { "type": "string", "enum": ["essential", "subscription", "flexible"] },
+        "amount": { "type": "number" },
+        "dueDate": { "type": "string" },
+        "isPaid": { "type": "boolean" },
+        "frequency": { "type": "string", "enum": ["once", "weekly", "monthly"] },
+        "isPaused": { "type": "boolean" },
+        "note": { "type": "string", "maxLength": 300 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "name", "category", "amount", "dueDate", "isPaid"]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "Logged actual expenditures during the budget cycle",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "amount": { "type": "number" },
+        "date": { "type": "string" },
+        "category": { "type": "string" },
+        "essential": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "name", "amount", "date", "category"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Unified financial transactions including income, actual expenses, planned expenses, debt, transfers",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "amount": { "type": "number" },
+        "currency": { "type": "string" },
+        "category": { "type": "string", "enum": ["needs", "wants", "savings", "debt", "emergency", "income"] },
+        "type": { "type": "string", "enum": ["actual_expense", "planned_expense", "confirmed_income", "estimated_income", "savings_transfer", "debt_payment", "internal_transfer"] },
+        "status": { "type": "string", "enum": ["completed", "pending", "scheduled", "cancelled"] },
+        "date": { "type": "string" },
+        "dueDate": { "type": "string" },
+        "isPaid": { "type": "boolean" },
+        "isRecurring": { "type": "boolean" },
+        "recurrenceRule": { "type": "string" },
+        "notes": { "type": "string", "maxLength": 300 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "name", "amount", "category", "type", "status", "date"]
+    },
+    "RoadmapItem": {
+      "title": "RoadmapItem",
+      "description": "Actionable prioritized step generated by AI coach based on financial engine",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "timeframe": { "type": "string", "enum": ["immediate", "mid_cycle", "end_of_cycle"] },
+        "impactRupees": { "type": "number" },
+        "isCompleted": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "priority", "title", "timeframe", "isCompleted"]
+    },
+    "AICoachInsight": {
+      "title": "AICoachInsight",
+      "description": "Stored financial health evaluations and recommendations generated by Gemini",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "summary": { "type": "string" },
+        "cashFlowStatus": { "type": "string" },
+        "strengths": { "type": "array", "items": { "type": "string" } },
+        "vulnerabilities": { "type": "array", "items": { "type": "string" } },
+        "groundedBenchmark": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "summary", "cashFlowStatus", "createdAt"]
+    },
+    "GamificationProfile": {
+      "title": "GamificationProfile",
+      "description": "User gamification level, XP, streaks, unlocked badges and challenges",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "level": { "type": "number" },
+        "currentXp": { "type": "number" },
+        "nextLevelXp": { "type": "number" },
+        "levelTitle": { "type": "string" },
+        "safeSpendStreak": { "type": "number" },
+        "bestStreak": { "type": "number" },
+        "lastEvaluatedDate": { "type": "string" },
+        "totalSimulationsRun": { "type": "number" },
+        "totalSimulationsNavigatedSafely": { "type": "number" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["userId", "level", "currentXp", "safeSpendStreak"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User account document"
+    },
+    "/users/{userId}/budgetPlan/{planId}": {
+      "schema": "BudgetPlan",
+      "description": "User budget plan settings"
+    },
+    "/users/{userId}/commitments/{commitmentId}": {
+      "schema": "Commitment",
+      "description": "User commitments subcollection"
+    },
+    "/users/{userId}/expenses/{expenseId}": {
+      "schema": "Expense",
+      "description": "User expenses subcollection"
+    },
+    "/users/{userId}/transactions/{transactionId}": {
+      "schema": "Transaction",
+      "description": "Unified financial transactions subcollection"
+    },
+    "/users/{userId}/roadmap/{stepId}": {
+      "schema": "RoadmapItem",
+      "description": "User actionable roadmap steps"
+    },
+    "/users/{userId}/insights/{insightId}": {
+      "schema": "AICoachInsight",
+      "description": "User AI coach insights history"
+    },
+    "/users/{userId}/gamification/{docId}": {
+      "schema": "GamificationProfile",
+      "description": "User gamification badges, streak, and XP profile"
+    }
+  }
+}
